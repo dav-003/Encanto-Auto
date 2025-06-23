@@ -1,1 +1,3 @@
-import './commands'
+import "./commands";
+import 'cypress-plugin-api'
+

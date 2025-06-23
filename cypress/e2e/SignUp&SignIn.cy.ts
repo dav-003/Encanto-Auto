@@ -1,142 +1,220 @@
-import { signUpPositive } from "../pageObjects/SignInSignUpPage";
-import { signUpNegative } from "../pageObjects/SignInSignUpPage";
+import { SignInSignUpSelectors } from "../pageObjects/Selectors/signInSignUpSelectors";
+import { SignInSignUpMethods } from "../pageObjects/Methods/signInSignUpMethods";
 
-describe('Sign up & Sign in', () => {
-    beforeEach(() => {
-        cy.visit('/')
-    })
-    context('Sign up Positive', () => {
-        it('Should validate SignUp modal', () => {
-            signUpPositive.AllModalValidate()
-        })
-        it('Should check eye button work', () => {
-            signUpPositive.CheckPasswordEyeButton()
-        })
-        it('Should create user', () => {
-            signUpPositive.CreateUser('123@abgd.com','12345678')
-        })
-    })
-    context.only('Sign up Negatives', () => {
-        it('Should show errors when fields contain only spaces', () => {
-            signUpNegative.checkEmptyFieldsWithSpaces()
-        })
-        it('Should validate invalid email, short password and mismatch', () => {
-            signUpNegative.checkInvalidEmailAndShortPassword()
-        })
-        it('Should show empty field errors when all fields are cleared', () => {
-            signUpNegative.checkCompletelyEmptyFields()
-        })
-        it('Should show error for already registered email', () => {
-            signUpNegative.checkDuplicateEmail('qwe123@a.a')
-        })
-        it('Should check register without checkbox', () => {
-            signUpNegative.checkWithoutPolicyCheckbox('abgd@mail.ru', '777')
-        })
-        it('Should check mismatch passwords', () => {
-            signUpNegative.checkMismatchedPasswords('abgd@mail.ru', '12345', '789')
-        })
-        it('Should check special symbols in email field', () => {
-            signUpNegative.checkInvalidEmailCharacters()
-        })
-        it('Should check too long email', () => {
-            signUpNegative.checkTooLongEmail()
-        })
-    })
-})
-// describe('Sign up And Sign in', () => {
-//     beforeEach(() => {
-//         cy.visit('/')
-//     })
-//     context('Sign up Sign in modal', () => {
-//         it('Should open modal and go to sign up', () => {
-//             cy.get('div.index-module-scss-module__7ov_ta__user').click()
-//             cy.get('div.index-module-scss-module__iSzDEq__modal.modal').should('be.visible')
-//             cy.get('button[type="button"]').contains('Ստեղծել հաշիվ').should('be.visible').click()
-//             cy.get('.index-module-scss-module__J3yFvG__title').contains('Գրանցվել')
-//             cy.get('input[name="email"]').should('be.visible')
-//             cy.get('input[name="password"]').should('be.visible')
-//             cy.get('input[name="confirmPassword"]').should('be.visible')
-//             cy.get('div.index-module-scss-module__J3yFvG__privacy_policy')
-//             .find('#policy')
-//             cy.get('div.index-module-scss-module__J3yFvG__privacy_policy')
-//             .find('a')
-//             .should('have.attr', 'href')
-//             cy.get('button[type="submit"]').should('be.disabled')
-//             cy.get('button[type="button"]').contains('Մուտք գործել').click()
-//             cy.get('div').contains('Մուտք գործել').should('be.visible')
-//             cy.get('div.index-module-scss-module__iSzDEq__close').click()
-//             cy.get('div.index-module-scss-module__iSzDEq__modal.modal').should('not.exist')
-//         })
-//     })
-//     context('Sign up positives', () => {
-//         const uniqueEmail = `user_${Date.now()}@mail.ru`
+describe("Sign up", () => {
+  beforeEach(() => {
+    cy.visit("/");
+  });
+  const uniqueEmail = `user_${Date.now()}@mail.ru`;
+  const uniquePassword = "12345qwerty";
+  const registratedEmail = "19790616@mail.ru";
+  const invalidEmail = "test@exam!ple.com";
+  const longEmail = "a".repeat(101) + "@example.com";
 
-//         it('Should check positive cases for registration', () => {
-//             cy.get('div.index-module-scss-module__7ov_ta__user').click()
-//             cy.get('button[type="button"]').contains('Ստեղծել հաշիվ').click()
-//             cy.get('div').contains('Գրանցվել').should('be.visible')
-//             cy.get('#policy').check()
-//             cy.get('button[type="submit"]').should('be.enabled')
-//             cy.get('#policy').uncheck()
-//             cy.get('input[name="email"]').type('123')
-//             cy.get('#policy').check()
-//             cy.get('button[type="submit"]').click()
-//             cy.get('span:contains("Սխալ ֆորմատ")').should('be.visible')
-//             cy.get('input[name="email"]').type('@gmail.com')
-//             cy.get('button[type="submit"]').click()
-//             cy.get('span:contains("Սխալ ֆորմատ")').should('not.exist')
-//             cy.get('input[name="email"]').clear()
-//             cy.get('button[type="submit"]').click()
-//             cy.get('span:contains("Դատարկ դաշտ")').should('have.length', 2)
-//             cy.get('input[name="password"]').type('12345')
-//             cy.get('span:contains("Նվազագույն արժեքը 8")').should('be.visible')
-//             cy.get('input[type="password"][name="password"]').should('exist')
-//             cy.get('[class*="show_password_block"]').eq(0).click()
-//             cy.get('input[type="text"][name="password"]').should('exist')
-//             cy.get('input[name="password"]').type('678')
-//             cy.get('button[type="submit"]').click()
-//             cy.get('span:contains("Նվազագույն արժեքը 8")').should('not.exist')
-//             cy.get('span:contains("Դաշտերը չեն համընկնում")').should('be.visible')
-//             cy.get('input[name="confirmPassword"]').type('12345678')
-//             cy.get('button[type="submit"]').click()
-//             cy.get('span:contains("Դաշտերը չեն համընկնում")').should('not.exist')
-//             cy.get('input[type="password"][name="confirmPassword"]').should('exist')
-//             cy.get('[class*="show_password_block"]').eq(1).click()
-//             cy.get('[class*="show_password_block"]').eq(0).click()
-//             cy.get('input[type="text"][name="confirmPassword"]').should('exist')
-//             cy.get('input[name="email"]').type(uniqueEmail)
-//             cy.get('span:contains("Սխալ ֆորմատ")').should('not.exist')
-//             cy.get('button[type="submit"]').click()
-//             cy.url().should('contain', '/profile')
-//         })
-//     })
-//     context('Sign up negatives', () => {
-//         it('Should check negative cases for registrating', () => {
-//             cy.get('div.index-module-scss-module__7ov_ta__user').click()
-//             cy.get('button[type="button"]').contains('Ստեղծել հաշիվ').click()
-//             cy.get('button[type="submit"]').should('be.disabled')
-//             cy.get('input[name="email"]').type('         ')
-//             cy.get('input[name="password"]').type('         ')
-//             cy.get('input[name="confirmPassword"]').type('         ')
-//             cy.get('#policy').check()
-//             cy.get('button[type="submit"]').click()
-//             cy.get('span:contains("Դատարկ դաշտ")').should('have.length', 2)
-//             cy.get('input[name="email"]').clear().type('a@.a')
-//             cy.get('input[name="password"]').clear().type('1234567')
-//             cy.get('input[name="confirmPassword"]').clear().type('123')
-//             cy.get('span:contains("Սխալ ֆորմատ")').should('be.visible')
-//             cy.get('span:contains("Նվազագույն արժեքը 8")').should('be.visible')
-//             cy.get('span:contains("Դաշտերը չեն համընկնում")').should('be.visible')
-//             cy.get('input[name="email"]').clear()
-//             cy.get('input[name="password"]').clear()
-//             cy.get('input[name="confirmPassword"]').clear()
-//             cy.get('button[type="submit"]').click()
-//             cy.get('span:contains("Դատարկ դաշտ")').should('have.length', 2)
-//             cy.get('input[name="email"]').type('qwe123@a.a')
-//             cy.get('input[name="password"]').type('12345678')
-//             cy.get('input[name="confirmPassword"]').type('12345678')
-//             cy.get('button[type="submit"]').click()
-//             cy.get('#\\31').should('be.visible').and('have.text', 'Էլ.փոստ գոյություն ունի')
-//         })
-//     })
-// })
+  context("Sign up Positive", () => {
+    it("Should open and validate SignUp modal", () => {
+      SignInSignUpMethods.OpenSignUpModal();
+    });
+    it("Should check eye button work", () => {
+      SignInSignUpMethods.OpenSignUpModal();
+      SignInSignUpSelectors.passwordInput().should(
+        "have.attr",
+        "type",
+        "password",
+      );
+      SignInSignUpSelectors.passwordEyeButton().click();
+      SignInSignUpSelectors.passwordInput().should("have.attr", "type", "text");
+      SignInSignUpSelectors.confirmPasswordInput().should(
+        "have.attr",
+        "type",
+        "password",
+      );
+      SignInSignUpSelectors.confirmPasswordEyeButton().click();
+      SignInSignUpSelectors.confirmPasswordInput().should(
+        "have.attr",
+        "type",
+        "text",
+      );
+    });
+    it("Should create user", () => {
+      SignInSignUpMethods.OpenSignUpModal();
+      SignInSignUpSelectors.emailInput().type(uniqueEmail);
+      SignInSignUpSelectors.passwordInput().type(uniquePassword);
+      SignInSignUpSelectors.confirmPasswordInput().type(uniquePassword);
+      SignInSignUpSelectors.submitButton().should("be.disabled");
+      SignInSignUpSelectors.policyCheckbox().check();
+      SignInSignUpSelectors.submitButton().should("be.enabled").click();
+      cy.url().should("include", SignInSignUpSelectors.profilePageEndpoint());
+    });
+  });
+  context("Sign up Negatives", () => {
+    it("Should show errors when fields contain only spaces", () => {
+      SignInSignUpMethods.OpenSignUpModal();
+      SignInSignUpSelectors.emailInput().type("         ");
+      SignInSignUpSelectors.passwordInput().type("        ");
+      SignInSignUpSelectors.confirmPasswordInput().type("         ");
+      SignInSignUpSelectors.policyCheckbox().check();
+      SignInSignUpSelectors.submitButton().click();
+      SignInSignUpSelectors.errorEmptyField().should("have.length", 2);
+    });
+    it("Should validate invalid email, short password and mismatch", () => {
+      SignInSignUpMethods.OpenSignUpModal();
+      SignInSignUpSelectors.emailInput().type("a@.a");
+      SignInSignUpSelectors.passwordInput().type("1234567");
+      SignInSignUpSelectors.confirmPasswordInput().type("123");
+      SignInSignUpSelectors.policyCheckbox().check();
+      SignInSignUpSelectors.submitButton().click();
+      SignInSignUpSelectors.errorWrongFormat().should("be.visible");
+      SignInSignUpSelectors.errorMinLength().should("be.visible");
+      SignInSignUpSelectors.errorMismatch().should("be.visible");
+    });
+    it("Should show empty field errors when all fields are cleared", () => {
+      SignInSignUpMethods.OpenSignUpModal();
+      SignInSignUpSelectors.policyCheckbox().check();
+      SignInSignUpSelectors.submitButton().click();
+      SignInSignUpSelectors.errorEmptyField().should("have.length", 2);
+    });
+    it("Should show error for already registered email", () => {
+      SignInSignUpMethods.OpenSignUpModal();
+      SignInSignUpSelectors.emailInput().type(registratedEmail);
+      SignInSignUpSelectors.passwordInput().type(uniquePassword);
+      SignInSignUpSelectors.confirmPasswordInput().type(uniquePassword);
+      SignInSignUpSelectors.policyCheckbox().check();
+      SignInSignUpSelectors.submitButton().click();
+      SignInSignUpSelectors.alertEmailExists()
+        .should("be.visible")
+        .and("have.text", "Էլ.փոստ գոյություն ունի");
+    });
+    it("Should check register without checkbox", () => {
+      SignInSignUpMethods.OpenSignUpModal();
+      SignInSignUpSelectors.emailInput().type(registratedEmail);
+      SignInSignUpSelectors.passwordInput().type(uniquePassword);
+      SignInSignUpSelectors.confirmPasswordInput().type(uniquePassword);
+      SignInSignUpSelectors.submitButton().should("be.disabled");
+    });
+    it("Should check mismatch passwords", () => {
+      SignInSignUpMethods.OpenSignUpModal();
+      SignInSignUpSelectors.emailInput().type(registratedEmail);
+      SignInSignUpSelectors.passwordInput().type(uniquePassword);
+      SignInSignUpSelectors.confirmPasswordInput().type("123");
+      SignInSignUpSelectors.policyCheckbox().check();
+      SignInSignUpSelectors.submitButton().click();
+      SignInSignUpSelectors.errorMismatch().should("be.visible");
+    });
+    it("Should check special symbols in email field", () => {
+      SignInSignUpMethods.OpenSignUpModal();
+      SignInSignUpSelectors.emailInput().type(invalidEmail);
+      SignInSignUpSelectors.passwordInput().type(uniquePassword);
+      SignInSignUpSelectors.confirmPasswordInput().type("123");
+      SignInSignUpSelectors.policyCheckbox().check();
+      SignInSignUpSelectors.submitButton().click();
+      SignInSignUpSelectors.errorWrongFormat().should("be.visible");
+    });
+    it("Should check too long email", () => {
+      SignInSignUpMethods.OpenSignUpModal();
+      SignInSignUpSelectors.emailInput().type(longEmail);
+      SignInSignUpSelectors.passwordInput().type(uniquePassword);
+      SignInSignUpSelectors.confirmPasswordInput().type("123");
+      SignInSignUpSelectors.policyCheckbox().check();
+      SignInSignUpSelectors.submitButton().click();
+      SignInSignUpSelectors.errorWrongFormat().should("be.visible");
+    });
+    it('Should check filled email and password without confirm password', () => {
+      SignInSignUpMethods.OpenSignUpModal();
+      SignInSignUpMethods.FillSignUpForm({email: uniqueEmail, password: uniquePassword})
+      SignInSignUpSelectors.policyCheckbox().check();
+      SignInSignUpSelectors.submitButton().click()
+      SignInSignUpSelectors.errorMismatch().should('be.visible')
+    })
+    it('Should check empty email and filled passwords', () => {
+      SignInSignUpMethods.OpenSignUpModal()
+      SignInSignUpMethods.FillSignUpForm({password: uniquePassword, confirmPassword: uniquePassword})
+      SignInSignUpSelectors.policyCheckbox().check()
+      SignInSignUpSelectors.submitButton().click()
+      SignInSignUpSelectors.errorEmptyField().should('be.visible')
+    })
+    it('Should check filled email and confirm password', () => {
+      SignInSignUpMethods.OpenSignUpModal()
+      SignInSignUpMethods.FillSignUpForm({email: uniqueEmail, confirmPassword: uniquePassword})
+      SignInSignUpSelectors.policyCheckbox().check()
+      SignInSignUpSelectors.submitButton().click()
+      SignInSignUpSelectors.errorEmptyField().should('be.visible')
+      SignInSignUpSelectors.errorMismatch().should('be.visible')
+    })
+  });
+});
+describe("Sign In", () => {
+  beforeEach(() => {
+    cy.visit("/");
+  });
+  const registratedEmail = "dav.hovhannisyan52@gmail.com";
+  const registratedPassword = "12345678?";
+  const wrongEmail = " dav . hovhannisyan 52 @ gmail . com ";
+  const wrongPassword = " 1 2 3 4 5 6 7 8 ? ";
+  const unregistratedEmail = "abgdez@abgd.ru"
+  const unregistratedPassword = "098098098"
+
+  context("Sign in Positive", () => {
+    it("Should open sign in modal and validate", () => {
+      SignInSignUpMethods.OpenSignInModal();
+    });
+    it("Should open and close modal", () => {
+      SignInSignUpMethods.OpenSignInModal();
+      SignInSignUpSelectors.closeAuthModal().click();
+      SignInSignUpSelectors.authModal().should("not.exist");
+    });
+    it("Should sign in successfully", () => {
+      SignInSignUpMethods.OpenSignInModal();
+      SignInSignUpSelectors.emailInput().type(registratedEmail);
+      SignInSignUpSelectors.passwordInput().type(registratedPassword);
+      SignInSignUpSelectors.submitButton().click();
+      cy.url().should("include", SignInSignUpSelectors.profilePageEndpoint());
+    });
+  });
+  context("Sign in Negative", () => {
+    it("Should check log in with spaces", () => {
+      SignInSignUpMethods.OpenSignInModal();
+      SignInSignUpSelectors.emailInput().type("    ");
+      SignInSignUpSelectors.passwordInput().type("    ");
+      SignInSignUpSelectors.submitButton().click();
+      SignInSignUpSelectors.errorEmptyField().should("have.length", 2);
+    });
+    it("Should check log in with empty fields", () => {
+      SignInSignUpMethods.OpenSignInModal();
+      SignInSignUpSelectors.submitButton().click();
+      SignInSignUpSelectors.errorEmptyField().should("have.length", 2);
+    });
+    it("Should check empty mail but filled password", () => {
+      SignInSignUpMethods.OpenSignInModal();
+      SignInSignUpSelectors.passwordInput().type(registratedPassword);
+      SignInSignUpSelectors.submitButton().click();
+      SignInSignUpSelectors.errorEmptyField().should("have.length", 1);
+    });
+    it("Should check filled email but empty password", () => {
+      SignInSignUpMethods.OpenSignInModal();
+      SignInSignUpSelectors.emailInput().type(registratedEmail);
+      SignInSignUpSelectors.submitButton().click();
+      SignInSignUpSelectors.errorEmptyField().should("have.length", 1);
+    });
+    it("Should check correct credentials with spaces", () => {
+      SignInSignUpMethods.OpenSignInModal();
+      SignInSignUpSelectors.emailInput().type(wrongEmail);
+      SignInSignUpSelectors.passwordInput().type(wrongPassword);
+      SignInSignUpSelectors.submitButton().click();
+      SignInSignUpSelectors.errorWrongFormat().should("have.length", 1);
+    })
+    it("Should check sign in with unregistrated data", () => {
+      SignInSignUpMethods.OpenSignInModal();
+      cy.intercept({method: "POST", url: "/signin"}).as('InvalidSignIn')
+      SignInSignUpSelectors.emailInput().type(unregistratedEmail);
+      SignInSignUpSelectors.passwordInput().type(unregistratedPassword);
+      SignInSignUpSelectors.submitButton().click();
+      SignInSignUpSelectors.alertWrongEmailOrPassword().should('exist')
+      cy.wait('@InvalidSignIn').then(xhr => {
+        expect(xhr.response?.statusCode).to.eq(422)
+        expect(xhr.response?.statusMessage).to.eq('Unprocessable Entity')
+        expect(xhr.request.body).deep.equal({email: unregistratedEmail, password: unregistratedPassword})
+      })
+    });
+  });
+});
